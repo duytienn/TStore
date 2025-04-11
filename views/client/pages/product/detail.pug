@@ -1,0 +1,105 @@
+extends ../../layouts/default.pug 
+include ../../mixins/box-head.pug
+include ../../mixins/alert.pug
+
+block main 
+
+    +alert-success()
+
+    .product-detail 
+        .container.my-5 
+            .row 
+                .col-6 
+                    .inner-thumb 
+                        img(src=product.thumbnail, alt=product.title)
+                .col-6 
+                    h1(class="inner-tilte") #{product.title} 
+
+                    if (product.category)
+                        div(class="inner-category")
+                            span Danh mục : 
+                            a(href=`/products/${product.category.slug}`) #{product.category} 
+                    div(class="inner-price")
+                        if (product.newPrice) 
+                            div(class="inner-price-new") 
+                                h1 Giá : 
+                                span #{product.newPrice.toLocaleString('vi-VN')} VNĐ
+
+                        if(product.price)
+                            div(class="inner-price-old") #{product.price.toLocaleString('vi-VN')} VNĐ
+
+                        if(product.discountPercentage)
+                            div(class="inner-percent")  -#{product.discountPercentage}%
+
+                    if(product.stock)
+                        div(class="inner-stock") 
+                            h1 Còn lại :
+                            <span>#{product.stock} Sản phẩm</span>
+
+                    form(
+                        action=`/cart/add/${product.id}`
+                        method="POST"
+                    )   
+                        label(for="") Số lượng :
+                        input(
+                            class="form-control"
+                            type="number"
+                            name="quantity"
+                            value="1"
+                            min="1"
+                            max=product.stock
+                        )
+                        button(
+                            type="submit"
+                            class="btn btn-success btn-block"
+                        ) THÊM VÀO GIỎ
+    hr
+
+    .product-desc
+        .container.my-5
+            .row 
+                .col-12 
+                    +box-head("Mô tả sản phẩm")
+                    hr
+                    .inner-desc !{product.description}
+
+    hr
+    .comment-product 
+        .container
+            .row 
+                .col-12 
+                    +box-head("Bình luận và đánh giá")
+
+                    if (user)
+                        div(class="comment-section")
+                            form#commentForm(class="comment-form")
+                                textarea#commentInput(
+                                    class="tinymce-textarea"
+                                    name="comment" type="text" placeholder="Viết bình luận của bạn tại đây..."
+                                    )
+                                button(type="submit") Bình luận
+
+                            div(id="commentList" class="comment-list")
+                                each comment in comments
+                                    div(class="comment-item")
+                                        div(class="comment-author") 
+                                            b #{comment.infoUser.fullName}
+                                        div(class="comment-text") 
+                                            b !{comment.content}
+                    else 
+                        div(class="comment-section")
+                            h4 Bạn cần phải đăng nhập trước khi muốn bình luận!
+
+                            div(id="commentList" class="comment-list")
+                                each comment in comments
+                                    div(class="comment-item")
+                                        div(class="comment-author") 
+                                            b #{comment.infoUser.fullName}
+                                        div(class="comment-text") 
+                                            b !{comment.content}
+
+            
+    block script 
+        script(type="module" src="/js/comment.js")
+
+

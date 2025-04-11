@@ -1,0 +1,58 @@
+extends ../../layouts/default.pug 
+
+block main 
+
+    div.top-container
+        div.status
+            div.header
+                h4#big Các danh mục
+                //- h4#small Hoạt động hằng tuần
+            div.items-list
+                div.item
+                    div.info
+                        div
+                            h5 Danh mục sản phẩm
+                            p - Tổng số danh mục : #{statistic.categoryProduct.total}
+                            p - Số danh mục hoạt động :#{statistic.categoryProduct.active}
+                            p - Số danh mục ngừng hoạt động :#{statistic.categoryProduct.inactive}
+                div.item
+                    div.info
+                        div
+                            h5 Sản phẩm
+                            p - Tổng số sản phẩm :#{statistic.product.total}
+                            p - Số sản phẩm hoạt động: #{statistic.product.active}
+                            p - Số sản phẩm ngừng hoạt động :#{statistic.product.inactive}
+                div.item
+                    div.info
+                        div
+                            h5 Đơn hàng
+                            p - Tổng số đơn hàng :#{statistic.order.total}
+                            p - Số đơn hàng được đặt: #{statistic.order.active}
+                            p - Số đơn hàng bị hủy : #{statistic.order.inactive}
+                div.item
+                    div.info
+                        div
+                            h5 Doanh thu 
+                            h3 117.000.000 VNĐ
+                            
+
+    div.bottom-container
+        div.prog-status
+            div.header
+                h4 Biểu đồ doanh thu
+                div.tabs
+                    a.active(href="#") 1 năm
+            canvas.prog-chart
+        div.prog-status
+            div.header
+                h4 Biểu đồ top sản phẩm bán chạy
+                div.tabs
+            canvas.prog-chart2
+    each product in productFeatured
+        div(class="product" data-product=product.sold)
+        div(class="product" data-title=product.title)
+        
+
+
+    script(src="https://cdn.jsdelivr.net/npm/chart.js") 
+    script(src="/admin/js/dashboard.js")
