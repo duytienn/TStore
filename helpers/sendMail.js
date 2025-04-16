@@ -11,7 +11,7 @@ module.exports.sendMail = (email, subject, html) => {
       
       // send mail with defined transport object
       const mail = {
-        from: "kirito14042003@gmail.com", // sender address
+        from: "damduytien2003@gmail.com", // sender address
         to: email, // list of receivers
         subject: subject, // Subject line
         html: html // html body

@@ -10,6 +10,8 @@ const productSchema = new mongoose.Schema(
       default: "",
     },
     description: String,
+    color: String,
+    memory: Number,
     price: Number,
     discountPercentage: Number,
     rating: Number,

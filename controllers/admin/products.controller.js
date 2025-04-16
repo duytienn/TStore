@@ -27,7 +27,7 @@ module.exports.index = async (req, res) => {
   const objectPagination = navigationHelper(
     {
       currentPage: 1,
-      limitProduct: 5,
+      limitProduct: 10,
     },
     req.query,
     countPage
