@@ -7,7 +7,7 @@ const orderSchema = new mongoose.Schema({
         fullName: String,
         phone: String,
         address: String
-        },
+    },
     products: [
         {
             product_id: String,
@@ -16,21 +16,23 @@ const orderSchema = new mongoose.Schema({
             quantity: Number
         },
     ],
-    status : {
+    paymentMethod: {
+        type: String,
+        default: "cod"  // Giá trị mặc định là COD, có thể là 'qr' hoặc 'crypto'
+    },
+    status: {
         type: String,
         default: "pending"
     },
-    deleted : {
+    deleted: {
         type: Boolean,
         default: false
     }
 },
-    {
+{
     timestamps: true
-    }
-);
+});
 
 const Order = mongoose.model("Order", orderSchema, "orders");
 
 module.exports = Order;
-

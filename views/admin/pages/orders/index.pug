@@ -20,6 +20,7 @@ block main
                             th.text-center.align-middle Tên người đặt hàng
                             th.text-center.align-middle Sản phẩm
                             th.text-center.align-middle Giá tiền 
+                            th.text-center.align-middle Phương thức thanh toán
                             th.text-center.align-middle Địa chỉ
                             th.text-center.align-middle Thời gian đặt
                             th.text-center.align-middle Trạng thái
@@ -32,6 +33,16 @@ block main
                                     each product in order.products
                                         p #{product.productInfo.title} x#{product.quantity}
                                 td.text-center.align-middle #{order.totalPrice.toLocaleString('vi-VN')} VNĐ
+                                td.text-center.align-middle 
+                                    - var pm = order.paymentMethod
+                                    if pm === 'cod'
+                                        | COD
+                                    else if pm === 'qr'
+                                        | QR
+                                    else if pm === 'crypto'
+                                        | Crypto
+                                    else
+                                        | #{pm}
                                 td.text-center.align-middle #{order.userInfo.address}
                                 td.text-center.align-middle
                                     +formatDateTime(order.createdAt)

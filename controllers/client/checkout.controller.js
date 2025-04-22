@@ -190,6 +190,83 @@ module.exports.orderQr = async (req, res) => {
   }
 };
 
+
+
+
+// [GET] /checkout/crypto
+module.exports.crypto = async (req, res, next) => {
+  try {
+    const cartId = req.cookies.cartId;
+    const cart   = await Cart.findOne({ _id: cartId });
+    // tính lại totalPrice
+    await totalPriceHelper(cart);
+    cart.totalPrice = cart.products.reduce((sum, i) => sum + i.totalPrice, 0);
+
+    // tỉ giá VNĐ → USDT
+    const RATE = process.env.USDT_RATE ? Number(process.env.USDT_RATE) : 26000;
+    const usdtAmount = (cart.totalPrice / RATE).toFixed(6);
+
+    res.render("client/pages/checkout/crypto", {
+      pageTitle: "Thanh toán bằng Crypto",
+      cart,
+      usdtAmount,      // giá trị mặc định hiển thị
+      rate: RATE,      // để nếu bạn muốn show tỉ giá
+      recipient: process.env.USDT_RECIPIENT // có thể khai báo trong .env
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// [POST] /checkout/order-crypto
+module.exports.orderCrypto = async (req, res) => {
+  try {
+    const user_id = res.locals.user.id;
+    const cartId = req.cookies.cartId;
+    const userInfo = req.body;
+
+    const cart = await Cart.findOne({ _id: cartId });
+
+    let products = [];
+
+    for (const item of cart.products) {
+      const objectProducts = {
+        product_id: item.product_id,
+        price: 0,
+        discountPercentage: 0,
+        quantity: item.quantity,
+      };
+      const productInfo = await Product.findOne({ _id: item.product_id });
+      objectProducts.price = productInfo.price;
+      objectProducts.discountPercentage = productInfo.discountPercentage;
+      products.push(objectProducts);
+    }
+
+    const objectOrder = {
+      user_id: user_id,
+      cart_id: cartId,
+      userInfo: userInfo,
+      products: products,
+      paymentMethod: 'crypto'
+    };
+
+    const order = new Order(objectOrder);
+    await order.save();
+
+    // Xóa cart
+    await Cart.updateOne({ _id: cartId }, { products: [] });
+
+    res.json({ success: true, orderId: order.id });
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res.json({ success: false, error: error.message });
+  }
+};
+
+
+
+
+
 //[GET] /checkout/success/:id
 module.exports.success = async (req, res) => {
   const order = await Order.findOne({
